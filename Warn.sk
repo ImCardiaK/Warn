@@ -1,0 +1,58 @@
+#Do not touch "%arg 1%" and "options"
+#but you can change "/tempban 1h 3Warns"
+#replace /tempban by /ban or other commands
+#To put the time of the desired sanction change "1h" ... whatever you want
+# "3warns" it's the reason. you can change this.
+#
+#You can change: 
+#NumberOfLimit (The limit before a player is banned or receives the final sanction)
+#PermWarn and PermMessage (The Permission that must be added to the group so that the player can execute the command and The message that will be sent to the player if he does not have the permission)
+#PermSeeWarn and PermMessage (The Permission that must be added to the group so that the player can execute the command and The message that will be sent to the player if he does not have the permission)
+
+options:
+
+CommandExecuteAfter3Warns: /tempban %arg 1% 1h 3Warns
+NumberOfLimit: 3
+
+PermWarn: warn.permission
+PermMessage: You don't have permission !
+
+PermSeeWarn: seewarn.permission
+PermMessage: You don't have permission !
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+command /warn [<player>] [<text>]:
+	permission : {@PermWarn}
+	permission message: {@PermMessage}
+	trigger:
+		if arg-1 isn't set:
+			send "&7Use: &c/warn &7Player &7Reason" to player
+		else if arg-2 isn't set:
+			send "&7Use: &c/warn &7Player &7Reason" to player
+		else if arg-2 is "help":
+			send "&b============%nl% &c/warn&7: &8Player Reason" to player
+		else:
+			add 1 to {warn::%arg 1%}
+			broadcast "&4%arg 1% &c to was warned. &6For: &e%arg 2%"
+			if {warn::%arg 1%} = {@NumberOfLimit}:
+				make console execute command "{@CommandExecuteAfter3Warns}"
+				set {warn::%arg 1%} to 0
+
+command /seewarn <player>:
+	permission : {@PermSeeWarn}
+	permission message: {@PermMessage}
+	trigger:
+		send "&c%arg 1%: &c%{warn::%arg-1%}% &4warns"
